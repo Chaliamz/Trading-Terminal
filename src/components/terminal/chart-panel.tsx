@@ -44,26 +44,29 @@ export function ChartPanel() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex h-8 shrink-0 items-center gap-3 border-b border-line px-3">
+      <div className="flex h-8 shrink-0 items-center gap-3 overflow-hidden border-b border-line px-3 whitespace-nowrap">
         <span className="text-[12px] font-semibold text-fg">{inst.display}</span>
         <Badge variant="muted" className="num">
           {INTERVAL_LABEL[interval]}
         </Badge>
         {quote && (
-          <span className="num hidden text-[11px] lg:inline">
+          <span className="num hidden text-[11px] 2xl:inline">
             <span className="text-up">{fmtPrice(quote.bid, inst.pxDecimals)}</span>
             <span className="mx-1 text-fg-mute">/</span>
             <span className="text-down">{fmtPrice(quote.ask, inst.pxDecimals)}</span>
           </span>
         )}
-        <span className="num text-[10.5px] text-fg-mute">
-          Bar closes in{" "}
+        <span className="num hidden text-[10.5px] text-fg-mute sm:inline" title="Time until the current bar closes">
+          Close in{" "}
           <span className="text-fg-dim">{remaining != null && remaining > 0 ? fmtDuration(remaining) : "—"}</span>
         </span>
         {trend && (
-          <Badge variant={trend === "bullish" ? "up" : "down"}>Structure {trend === "bullish" ? "▲ bull" : "▼ bear"}</Badge>
+          <Badge variant={trend === "bullish" ? "up" : "down"}>
+            <span className="hidden xl:inline">Structure</span> {trend === "bullish" ? "▲ bull" : "▼ bear"}
+          </Badge>
         )}
         <div className="ml-auto flex items-center gap-0.5">
+          <div className="hidden items-center gap-0.5 md:flex">
           {QUICK_TOGGLES.map((t) => (
             <Button
               key={t.key}
@@ -76,7 +79,8 @@ export function ChartPanel() {
               {t.label}
             </Button>
           ))}
-          <div className="mx-1 h-4 w-px bg-line" />
+          </div>
+          <div className="mx-1 hidden h-4 w-px bg-line md:block" />
           <Button
             variant="ghost"
             size="icon-xs"

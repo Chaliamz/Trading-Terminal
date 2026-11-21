@@ -22,7 +22,7 @@ const sec = (ms: number) => Math.floor(ms / 1000) as UTCTimestamp;
 
 /** Caps to keep the chart legible on long histories. */
 const MAX_BREAKS = 40;
-const MAX_FVGS = 30;
+const MAX_FVGS = 15;
 const MAX_SWINGS = 120;
 const MAX_SWEEPS = 40;
 
@@ -100,7 +100,15 @@ export function buildOverlays(
     }
   }
 
+  // One bar can sweep several pools: keep a single marker per (bar, side, label).
+  const seen = new Set<string>();
+  const unique = markers.filter((m) => {
+    const k = `${m.time}:${m.position}:${m.text}`;
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
   // Markers must be sorted by time for the markers plugin.
-  markers.sort((a, b) => (a.time as number) - (b.time as number));
-  return { data: { segments, boxes }, markers };
+  unique.sort((a, b) => (a.time as number) - (b.time as number));
+  return { data: { segments, boxes }, markers: unique };
 }

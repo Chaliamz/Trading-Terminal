@@ -21,18 +21,18 @@ export function TopBar() {
   const contexts = useMarketStore((s) => s.contexts);
 
   return (
-    <header className="flex h-11 shrink-0 items-center gap-3 border-b border-line bg-panel px-3">
-      <div className="flex items-center gap-2 pr-2">
+    <header className="flex h-11 shrink-0 items-center gap-3 overflow-x-auto border-b border-line bg-panel px-3 whitespace-nowrap">
+      <div className="flex shrink-0 items-center gap-2 pr-2">
         <div className="grid size-6 place-items-center rounded-sm bg-accent text-[11px] font-black text-white">A</div>
-        <div className="leading-none">
+        <div className="hidden leading-none sm:block">
           <div className="text-[12px] font-bold tracking-[0.2em] text-fg">APEX</div>
           <div className="text-[9px] tracking-[0.3em] text-fg-mute">TERMINAL</div>
         </div>
       </div>
 
-      <div className="h-6 w-px bg-line" />
+      <div className="hidden h-6 w-px bg-line md:block" />
 
-      <nav className="flex items-center gap-1 overflow-x-auto" aria-label="Instrument">
+      <nav className="hidden items-center gap-1 md:flex" aria-label="Instrument">
         {HYPERLIQUID_INSTRUMENTS.map((inst) => {
           const ctx = contexts[inst.symbol];
           const chg = ctx ? ctx.markPx / ctx.prevDayPx - 1 : null;
@@ -60,7 +60,7 @@ export function TopBar() {
 
       <div className="h-6 w-px bg-line" />
 
-      <div className="flex items-center rounded-md border border-line bg-panel-2 p-0.5" role="group" aria-label="Timeframe">
+      <div className="flex shrink-0 items-center rounded-md border border-line bg-panel-2 p-0.5" role="group" aria-label="Timeframe">
         {INTERVALS.map((iv) => (
           <Button
             key={iv}
@@ -76,10 +76,10 @@ export function TopBar() {
         ))}
       </div>
 
-      <div className="ml-auto flex items-center gap-2">
+      <div className="ml-auto flex shrink-0 items-center gap-2">
         <Tooltip>
           <TooltipTrigger asChild>
-            <Badge variant="warn">Paper trading</Badge>
+            <Badge variant="warn">Paper<span className="hidden sm:inline">&nbsp;trading</span></Badge>
           </TooltipTrigger>
           <TooltipContent>All orders are simulated locally. Nothing is sent to any exchange.</TooltipContent>
         </Tooltip>

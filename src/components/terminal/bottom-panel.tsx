@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, RotateCcw, X } from "lucide-react";
+import { Download, RotateCcw, Settings2, X } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -60,13 +60,20 @@ function AccountStrip() {
     <div className="relative ml-auto flex items-center gap-4 overflow-x-auto px-3 text-[10.5px] whitespace-nowrap">
       <Badge variant="warn">Simulated</Badge>
       <Metric label="Equity" value={fmtUsd(m.equity)} tone={ret >= 0 ? "up" : "down"} extra={fmtPct(ret)} />
-      <Metric label="Balance" value={fmtUsd(m.balance)} />
+      <span className="hidden 2xl:flex">
+        <Metric label="Balance" value={fmtUsd(m.balance)} />
+      </span>
       <Metric label="uPnL" value={fmtSignedUsd(m.unrealized)} tone={m.unrealized >= 0 ? "up" : "down"} />
       <Metric label="Realised" value={fmtSignedUsd(m.realizedPnl)} tone={m.realizedPnl >= 0 ? "up" : "down"} />
-      <Metric label="Win rate" value={m.winRate == null ? "—" : fmtPct(m.winRate, 0, false)} />
-      <Metric label="Avg R" value={fmtR(m.avgR)} />
-      <Button variant="ghost" size="xs" onClick={() => setSettingsOpen((v) => !v)} aria-expanded={settingsOpen}>
-        Settings
+      <Button
+        variant="ghost"
+        size="icon-xs"
+        onClick={() => setSettingsOpen((v) => !v)}
+        aria-expanded={settingsOpen}
+        aria-label="Simulation settings"
+        title="Simulation settings"
+      >
+        <Settings2 />
       </Button>
       {confirmReset ? (
         <span className="flex items-center gap-1">
@@ -306,14 +313,20 @@ function PriceCell({ value, onSave, decimals }: { value: number | null; onSave: 
 }
 
 function JournalTable() {
-  const trades = usePaperStore((s) => s.account.trades);
+  const account = usePaperStore((s) => s.account);
   const hydrated = usePaperStore((s) => s.hydrated);
+  const trades = account.trades;
   if (!hydrated) return <Empty text="Loading…" />;
   if (trades.length === 0) return <Empty text="No closed trades yet. Closed paper trades are journalled here automatically." />;
+  const m = accountMetrics(account, {});
 
   return (
     <div>
-      <div className="flex justify-end px-2 pt-1">
+      <div className="flex items-center justify-end gap-4 px-3 pt-1 text-[10.5px]">
+        <Metric label="Trades" value={String(trades.length)} />
+        <Metric label="Win rate" value={m.winRate == null ? "—" : fmtPct(m.winRate, 0, false)} />
+        <Metric label="Avg R" value={fmtR(m.avgR)} tone={m.avgR == null ? undefined : m.avgR >= 0 ? "up" : "down"} />
+        <Metric label="Fees paid" value={fmtUsd(m.totalFees)} />
         <Button variant="ghost" size="xs" onClick={() => exportCsv(trades)}>
           <Download /> Export CSV
         </Button>

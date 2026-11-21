@@ -5,6 +5,7 @@ import { fmtCompactUsd, fmtPct, fmtPrice } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { useMarketStore } from "@/store/market-store";
 import { useUiStore } from "@/store/ui-store";
+import { ActivityLog } from "./activity-log";
 
 export function Watchlist() {
   const activeSymbol = useUiStore((s) => s.activeSymbol);
@@ -23,7 +24,7 @@ export function Watchlist() {
         <span>Market</span>
         <span className="text-right">Mark / 24h</span>
       </div>
-      <ul className="flex-1 overflow-y-auto">
+      <ul className="shrink-0">
         {HYPERLIQUID_INSTRUMENTS.map((inst) => {
           const ctx = contexts[inst.symbol];
           const q = quotes[inst.symbol];
@@ -66,9 +67,10 @@ export function Watchlist() {
           );
         })}
       </ul>
-      <p className="border-t border-line px-3 py-2 text-[10px] leading-relaxed text-fg-mute">
+      <p className="px-3 py-2 text-[10px] leading-relaxed text-fg-mute">
         Live mark prices from Hyperliquid&apos;s public WebSocket. 24h change vs. venue previous-day price.
       </p>
+      <ActivityLog />
     </div>
   );
 }
